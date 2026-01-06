@@ -1,43 +1,4 @@
-"""
-attendance_system_full.py
-==========================
 
-This script combines automatic facial attendance with a manual
-dashboard for final review.  It runs a time‑bound dual‑confirmation
-session in which each student must blink once near the start and
-again after a set interval (default 40 minutes).  Liveness detection
-is used to guard against spoofing via photographs or videos –
-researchers note that face recognition can be fooled by simple
-presentation attacks, so integrating liveness is essential【815820751481335†L520-L524】.
-
-After the automatic session concludes, a Tkinter GUI opens
-displaying each student's photo, name and their automatically
-determined status (Present or Absent).  The instructor can adjust
-any status manually.  When the attendance is saved, a CSV file is
-written with the final status for each student.
-
-Usage:
-
-1. Place each student's photo in an ``images/`` directory next to
-   this script.  The filename (without extension) should be the
-   student's name.  Supported formats: JPG, JPEG, PNG, WEBP.
-2. Install dependencies:
-   ``pip install face_recognition opencv-python numpy pillow``.
-3. Run the script:
-
-   ``python attendance_system_full.py``
-
-   A camera window will appear showing live video and status
-   instructions.  When the session ends (either by reaching the
-   configured duration or pressing ``q``), a dashboard window
-   will open.  Adjust attendance as needed and click **Save
-   Attendance** to export the results.
-
-The resulting CSV is named ``attendance_full_YYYY-MM-DD.csv`` and
-contains columns: ``Name``, ``CheckInTime``, ``CheckOutTime``,
-``Date`` and ``Status``.
-
-"""
 
 import os
 import csv
@@ -67,21 +28,7 @@ def run_dual_confirmation_session(
     duration_minutes: int = 40,
     checkout_window_minutes: int = 5,
 ) -> Tuple[Dict[str, List[datetime]], List[str]]:
-    """
-    Run a dual‑confirmation attendance session using blink‑based liveness detection.
-
-    Returns a dictionary mapping student names to a list of blink timestamps
-    and a roster of all recognised students (names from the images folder).
-
-    Parameters
-    ----------
-    duration_minutes: int
-        The required interval between the first and second blink for a
-        student to be automatically marked present.
-    checkout_window_minutes: int
-        Additional time allowed after the main duration for students to
-        provide their second confirmation (checkout).
-    """
+    
     start_time = datetime.now()
     window_end = start_time + timedelta(minutes=duration_minutes)
     final_end = window_end + timedelta(minutes=checkout_window_minutes)
@@ -200,13 +147,7 @@ def evaluate_auto_status(
     duration_minutes: int,
     tolerance_seconds: int = 60,
 ) -> Dict[str, str]:
-    """
-    Evaluate automatic attendance based on blink times.
-
-    Returns a dictionary mapping each student's name to either
-    ``"Present"`` or ``"Absent"`` based on whether they have at least two blinks
-    separated by ``duration_minutes * 60 - tolerance_seconds`` seconds.
-    """
+   
     statuses: Dict[str, str] = {}
     required_seconds = duration_minutes * 60 - tolerance_seconds
     for name in roster:
